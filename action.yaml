@@ -1,0 +1,36 @@
+name: "foreverbull python action"
+inputs:
+  path:
+    description: "Path to the file to test"
+    required: true
+  assets:
+    description: "Assets to download"
+    required: true
+  start:
+    description: "Start the server"
+    required: true
+  end:
+    description: "End the server"
+    required: true
+  alpaca_key:
+    description: "Alpaca API Key"
+    required: true
+  alpaca_secret:
+    description: "Alpaca API Secret"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install Client
+      run: python install_client.py
+    - name: Setup
+      run: |
+        foreverbull env start ${{ inputs.alpaca_key }} ${{ inputs.alpaca_secret }}
+        foreverbull service zipline backtest quay.io/foreverbull/zipline:latest
+        foreverbull backtest create action_backtest ${{ inputs.start }} ${{ inputs.end }} ${{ inputs.assets }} --backtest-service zipline
+        pytest ${{ inputs.path }} --backtest=action_backtest
+    - name: Teardown
+      run: foreverbull env stop
