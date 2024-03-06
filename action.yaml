@@ -28,6 +28,7 @@ runs:
       shell: bash
       run: |
         pip install https://github.com/lhjnilsson/foreverbull/releases/download/0.0.2403051754/foreverbull-0.0.2403051754-py3-none-any.whl
+        pip install pytest
         foreverbull env start ${{ inputs.alpaca_key }} ${{ inputs.alpaca_secret }}
         foreverbull service create zipline lhjnilsson/zipline:0.0.2403051754
         foreverbull backtest create action_backtest ${{ inputs.start }} ${{ inputs.end }} ${{ inputs.assets }} --backtest-service zipline
