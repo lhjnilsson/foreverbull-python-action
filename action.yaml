@@ -25,12 +25,15 @@ runs:
       with:
         python-version: '3.11'
     - name: Install Client
+      shell: bash
       run: python install_client.py
     - name: Setup
+      shell: bash
       run: |
         foreverbull env start ${{ inputs.alpaca_key }} ${{ inputs.alpaca_secret }}
         foreverbull service zipline backtest lhjnilsson/zipline:0.0.2403051754
         foreverbull backtest create action_backtest ${{ inputs.start }} ${{ inputs.end }} ${{ inputs.assets }} --backtest-service zipline
         pytest ${{ inputs.path }} --backtest=action_backtest
     - name: Teardown
+      shell: bash
       run: foreverbull env stop
